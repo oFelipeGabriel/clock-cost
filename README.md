@@ -2,6 +2,18 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Clock Cost
+
+Clock Cost é um projeto em React que combina um cronômetro com um cálculo de custo baseado no tempo. É uma ferramenta simples e útil para calcular o custo de um trabalho ou serviço em tempo real com base em uma taxa horária informada pelo usuário.
+
+#### Funcionalidades:
+
+- Cronômetro: Mostra o tempo decorrido desde o início da contagem.
+
+- Input de Valor por Hora: Permite que o usuário insira a taxa horária.
+
+- Cálculo em Tempo Real: Calcula e exibe o custo acumulado com base no tempo decorrido e na taxa horária informada.
+
 ## Available Scripts
 
 In the project directory, you can run:
