@@ -14,9 +14,9 @@ function App() {
   const startTimer = () => {
     if (!isRunning) {
       setIsRunning(true);
-      timeRef.current = setInterval(() => {
-        setTimeElapsed(prevTime => prevTime + 1);
-      }, 1000);
+      localStorage.setItem('isRunning', '1');
+      localStorage.setItem('startTime', Date.now().toString());
+      timeRef.current = setInterval(intervalFunction, 1000);
     }
   };
 
@@ -25,24 +25,41 @@ function App() {
     if (isRunning) {
       setIsRunning(false);
       clearInterval(timeRef.current);
+      localStorage.setItem('isRunning', '0');
+      localStorage.removeItem('startTime');
     }
   };
 
+  const clearTimer = () => {
+    stopTimer();
+    setTimeElapsed(0);
+  };
+
+  const intervalFunction = () => {
+    let startTimeLocalStorage = localStorage.getItem('startTime');
+    let isRunningLocalStorage = localStorage.getItem('isRunning');
+    setIsRunning(isRunningLocalStorage === '1');
+    if (isRunningLocalStorage === '1' && startTimeLocalStorage) {
+      let startTime = Number(startTimeLocalStorage);
+      setTimeElapsed((Date.now() - startTime) / 1000);
+    }
+  }
+
   // Limpar o intervalo quando o componente é desmontado
   React.useEffect(() => {
+    timeRef.current = setInterval(intervalFunction, 1000);
     return () => clearInterval(timeRef.current);
   }, []);
 
   React.useEffect(() => {
     setToPay(price * timeElapsed / 3600);
-    console.log(price * timeElapsed / 3600);
   }, [timeElapsed]);
 
   // Função para formatar o tempo decorrido
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
+    const s = Math.ceil(seconds % 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
   const formatCurrency = (value: number): string => {
@@ -64,6 +81,7 @@ function App() {
         <Button label="Start" onClick={startTimer} className='p-button-success p-button-outlined flex-1'/>
         <span className="p-inputgroup-addon">Valor total: {formatCurrency(toPay)}</span>
         <Button label="Stop" onClick={stopTimer} className='p-button-danger p-button-outlined flex-1'/>
+        <Button label="Clear" onClick={clearTimer} disabled={isRunning} className='p-button-info p-button-outlined flex-1'/>
       </div>
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', fontSize: '10em' }}>
         {formatTime(timeElapsed)}
